@@ -1,5 +1,11 @@
-bindHeaderButtonEvents()
-createEventsPage()
+
+defaultPageInit();
+
+function defaultPageInit() {
+	bindHeaderButtonEvents()
+	createEventsPage()
+}
+
 
 function bindHeaderButtonEvents() {
 	$(document).ready(() => {
@@ -78,6 +84,32 @@ function createEventsHourlyChart() {
 	})
 }
 
+function createChart(typeStr, labelStr, labelsList, dataList) {
+	$(document).ready( () => {
+		var ctx = document.getElementById('mainCanvas').getContext('2d');
+		var myChart = new Chart(ctx, {
+			type: typeStr,
+			data: {
+				labels: labelsList,
+				datasets: [{
+					label: labelStr,
+					data: dataList,
+					borderWidth: 1,
+				}]
+			},
+			options: {
+				scales: {
+					yAxes: [{
+						ticks: {
+							beginAtZero: true
+						}
+					}]
+				}
+			}
+		})
+	})
+}
+
 
 function createTablePage() {
 	$(document).ready(() => {
@@ -131,18 +163,15 @@ function createMapPage() {
 	$(document).ready(() => {
 		$("#canvasContainer").html("")
 		$("#canvasContainer").append('<div id="mapContainer" style="height: 600px;"></div>')
-		$("#canvasContainer").append('<button type="button" class="btn btn-primary" id="poi1Button">EQ Works</button>\
-									  <button type="button" class="btn btn-primary" id="poi2Button">CN Tower</button>\
-									  <button type="button" class="btn btn-primary" id="poi3Button">Niagara Falls</button>\
-									  <button type="button" class="btn btn-primary" id="poi4Button">Vancouver Harbour</button>')
 		createMap()
+		createMapButtons()
 	})
 }
 
 
 function createMap() {
 	$(document).ready(() => {
-		var mymap = L.map('mapContainer').setView([51.505, -0.09], 13);	
+		window.mymap = L.map('mapContainer').setView([51.505, -0.09], 13);	
 		L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoiamFjb2Jjcml0Y2giLCJhIjoiY2s2dThmdGdsMDdicDNocG55ZW56ZzdwYiJ9.frUrzAz0nb0AK04KHxtSYQ', {
 			attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
 			maxZoom: 18,
@@ -151,45 +180,25 @@ function createMap() {
 			zoomOffset: -1,
 			accessToken: 'pk.eyJ1IjoiamFjb2Jjcml0Y2giLCJhIjoiY2s2dThmdGdsMDdicDNocG55ZW56ZzdwYiJ9.frUrzAz0nb0AK04KHxtSYQ'
 		}).addTo(mymap);
-		$("#poi1Button").click((e) => {
-			mymap.panTo(new L.LatLng(43.6708, -79.3899))
-		})
-		$("#poi2Button").click((e) => {
-			mymap.panTo(new L.LatLng(43.6426, -79.3871))
-		})
-		$("#poi3Button").click((e) => {
-			mymap.panTo(new L.LatLng(43.0896, -79.0849))
-		})
-		$("#poi4Button").click((e) => {
-			mymap.panTo(new L.LatLng(49.2965, -123.0884))
-		})
-
 	})
 }
 
 
-function createChart(typeStr, labelStr, labelsList, dataList) {
-	$(document).ready( () => {
-	var ctx = document.getElementById('mainCanvas').getContext('2d');
-	var myChart = new Chart(ctx, {
-		type: typeStr,
-		data: {
-			labels: labelsList,
-			datasets: [{
-				label: labelStr,
-				data: dataList,
-				borderWidth: 1,
-			}]
-		},
-		options: {
-			scales: {
-				yAxes: [{
-					ticks: {
-						beginAtZero: true
-						}
-					}]
-				}
+function createMapButtons() {
+	$(document).ready(() => {
+		$.get("/poi", {}, (data) => {
+			if (data == "Rate exceeded, try again later") {
+				alert(data)
+				return
 			}
+			else {
+			data.forEach((e, i) => {
+				$("#canvasContainer").append('<button type="button" class="btn btn-primary" id="poi' + i.toString() + 'Button">' + e["name"] + '</button>')
+				$("#poi" + i.toString() + "Button").click((ev) => {
+					mymap.panTo(new L.LatLng(e["lat"], e["lon"]))
+				})
+			})
+			}   	
 		})
 	})
 }
