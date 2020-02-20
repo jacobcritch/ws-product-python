@@ -84,7 +84,7 @@ function createTablePage() {
 		$("#canvasContainer").html("")
 		$("#canvasContainer").append(
 			'<div class="row">\
-			<table id="dataTable" class="display" style="width:100%">\
+				<table id="dataTable" class="display" style="width:100%">\
 					<thead>\
 						<tr>\
 							<th>Date</th>\
@@ -103,7 +103,7 @@ function createTablePage() {
 							<th>Revenue</th>\
 						</tr>\
 					</tfoot>\
-				</table>\
+					</table>\
 			</div>'
 		)
 		createDataTable()
@@ -161,7 +161,7 @@ function createMap() {
 			mymap.panTo(new L.LatLng(43.0896, -79.0849))
 		})
 		$("#poi4Button").click((e) => {
-			mymap.panTo(new L.LatLng(43.6708, -79.3899))
+			mymap.panTo(new L.LatLng(49.2965, -123.0884))
 		})
 
 	})
