@@ -1,2 +1,1 @@
-web: redis-server
-web: pipenv run start
+web: /usr/local/bin/redis-server --daemonize yes; pipenv run start
