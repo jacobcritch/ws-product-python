@@ -1,0 +1,4 @@
+pipenv
+Flask
+sqlalchemy
+redis
